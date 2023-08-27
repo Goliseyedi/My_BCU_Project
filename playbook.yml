@@ -28,7 +28,7 @@
     - name: Generate router configuration
       template:
         src: template.j2
-        dest: D:\\BCU_Output\\{{ inventory_hostname }}-config.txt
+        dest: D:\BCU_Output\Result\{{ inventory_hostname }}-config.txt
 
     - name: Debug Generated Configuration
       debug:
@@ -36,7 +36,7 @@
 
     - name: Apply generated configuration using ios_config
       ios_config:
-        src: D:\\BCU_Output\\{{ inventory_hostname }}-config.txt
+        src: D:\BCU_Output\Result\{{ inventory_hostname }}-config.txt
       register: result
 
     - name: Debug Configuration Result

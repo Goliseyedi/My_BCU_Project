@@ -13,12 +13,8 @@ router eigrp 200
     network 192.168.2.0
   
 router ospf 100
-  router-id 1.1.1.2
+  router-id 1.1.1.1
     network 192.168.4.0 0.0.0.255 area 0
     network 192.168.3.0 0.0.0.255 area 0
-  
-router bgp 2.2.2.2
-  bgp router-id 2.2.2.2
-    neighbor 192.168.4.2 remote-as 65100
-      network 192.168.3.0
+    network 192.168.0.0 0.0.255.255 area 0
   
