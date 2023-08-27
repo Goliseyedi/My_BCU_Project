@@ -1,0 +1,50 @@
+- name: Configure network
+  hosts: Routers
+  gather_facts: no
+
+  tasks:
+    - name: Load router-specific variables
+      include_vars:
+        file: "{{ inventory_hostname }}.yml"
+
+    - name: Debug Loaded Variables
+      debug:
+        var: loopback_interfaces
+
+    - name: Debug Loaded OSPF Variables
+      debug:
+        var: ospf_router_id
+
+    - name: Debug Loaded EIGRP Variables
+      debug:
+        var: eigrp_networks
+
+    - name: Debug Loaded BGP Variables
+      debug:
+        var: bgp_router_id
+        var: bgp_neighbor_ip
+        var: bgp_networks
+
+    - name: Generate router configuration
+      template:
+        src: template.j2
+        dest: D:\\BCU_Output\\{{ inventory_hostname }}-config.txt
+
+    - name: Debug Generated Configuration
+      debug:
+        msg: "Generated configuration for {{ inventory_hostname }}:\n{{ lookup('file', 'D:\\BCU_Output\\' + inventory_hostname + '-config.txt') }}"
+
+    - name: Apply generated configuration using ios_config
+      ios_config:
+        src: D:\\BCU_Output\\{{ inventory_hostname }}-config.txt
+      register: result
+
+    - name: Debug Configuration Result
+      debug:
+        var: result
+
+    - name: Save Config
+      when: result.changed
+      ios_command:
+        commands:
+          - "write memory"

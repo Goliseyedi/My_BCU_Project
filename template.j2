@@ -1,0 +1,39 @@
+{% for loopback in loopback_interfaces %}
+interface Loopback{{ loopback.number }}
+  ip address {{ loopback.ip }} 255.255.255.0
+{% endfor %}
+
+{% for interface in interfaces %}
+interface {{ interface.name }}
+  ip address {{ interface.ip }} {{ interface.mask }}
+  no shutdown
+  {% if interface.ospf_area is defined %}
+    ip ospf 100 area {{ interface.ospf_area }}
+  {% endif %}
+{% endfor %}
+
+{% if eigrp_networks is defined %}
+router eigrp 200
+  {% for eigrp_network in eigrp_networks %}
+  network {{ eigrp_network }}
+  {% endfor %}
+{% endif %}
+
+{% if ospf_router_id is defined %}
+router ospf 100
+  router-id {{ ospf_router_id }}
+  {% for ospf_network in ospf_networks %}
+  network {{ ospf_network }} area 0
+  {% endfor %}
+{% endif %}
+
+{% if bgp_router_id is defined %}
+router bgp {{ bgp_router_id }}
+  bgp router-id {{ bgp_router_id }}
+  {% for bgp_neighbor in bgp_neighbors %}
+  neighbor {{ bgp_neighbor.ip }} remote-as {{ bgp_neighbor.remote_as }}
+  {% endfor %}
+  {% for bgp_network in bgp_networks %}
+  network {{ bgp_network }}
+  {% endfor %}
+{% endif %}
